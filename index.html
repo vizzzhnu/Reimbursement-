@@ -260,7 +260,64 @@
             .form-group.half-width {
                 grid-column: span 1;
             }
-        }
+        }/* Container for the upload section */
+.upload-container {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 20px 0;
+    max-width: 400px;
+}
+
+/* Style the Label */
+.upload-label {
+    display: block;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+/* Hide the actual input but keep it functional */
+.upload-input {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+/* Style the custom 'Choose file' button */
+.custom-upload-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #009879; /* Matching your table theme */
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: 1px solid #007d63;
+    font-size: 14px;
+}
+
+.custom-upload-button:hover {
+    background-color: #007d63;
+}
+
+/* Style for the text showing the file name */
+.file-name-display {
+    display: block;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #666;
+    font-style: italic;
+}
+
+/* Small text for constraints */
+.max-size-text {
+    font-size: 11px;
+    color: #999;
+    margin-top: 4px;
+}
     </style>
 </head>
 <body>
@@ -350,7 +407,31 @@
                         </div>
                     </div>
                 </div>
+                   <div class="upload-container">
+    <span class="upload-label">Upload Bill (JPEG, JPG, PDF) <span style="color: red;">*</span></span>
+    
+    <input type="file" name="file" id="file" class="upload-input" accept=".jpg,.jpeg,.pdf" />
+    <label for="file" class="custom-upload-button">
+        Choose file
+    </label>
 
+    <div class="file-name-display" id="file-name">No file chosen</div>
+    <div class="max-size-text">Max size: 5MB</div>
+</div>
+
+<script>
+    // Script to update the file name text when a user selects a file
+    const fileInput = document.getElementById('file');
+    const fileNameDisplay = document.getElementById('file-name');
+
+    fileInput.addEventListener('change', function() {
+        if (this.files && this.files.length > 0) {
+            fileNameDisplay.textContent = this.files[0].name;
+        } else {
+            fileNameDisplay.textContent = 'No file chosen';
+        }
+    });
+</script>
                 <div class="submit-section">
                     <button type="submit">Submit Bill</button>
                 </div>
@@ -541,27 +622,56 @@
 
         // Form submission
         document.getElementById('billingForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+    e.preventDefault();
+    
+    // --- NEW FILE HANDLING LOGIC ---
+    const fileInput = document.getElementById('file');
+    const fileNameDisplay = document.getElementById('file-name');
+    const file = fileInput.files[0];
+    let fileData = null;
+    let fileName = null;
+
+    if (file) {
+        // Basic size check (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            alert('File is too large. Please upload a file smaller than 5MB.');
+            return;
+        }
+        fileData = await fileToBase64(file);
+        fileName = file.name;
+    }
             
             const currency = document.getElementById('currency').value;
-            const paymentMethod = document.getElementById('paymentMethod').value;
+    const paymentMethod = document.getElementById('paymentMethod').value;
             
             // Prepare the base data - get values directly from hidden fields
-            const formData = {
-                billName: document.getElementById('billName').value,
-                invoiceNumber: document.getElementById('invoiceNumber').value,
-                invoiceDate: document.getElementById('invoiceDate').value,
-                site: document.getElementById('site').value,
-                subLedger: document.getElementById('subLedger').value,
-                gstNumber: document.getElementById('gstNumber').value,
-                currency: currency,
-                paymentMethod: paymentMethod,
-                amountUSD: document.getElementById('amountUSD').value,
-                amountINR: document.getElementById('amountINR').value,
-                exchangeRate: document.getElementById('exchangeRate').value,
-                exchangeRateDate: document.getElementById('exchangeRateDate').value
-            };
+           const formData = {
+        billName: document.getElementById('billName').value,
+        invoiceNumber: document.getElementById('invoiceNumber').value,
+        invoiceDate: document.getElementById('invoiceDate').value,
+        site: document.getElementById('site').value,
+        subLedger: document.getElementById('subLedger').value,
+        gstNumber: document.getElementById('gstNumber').value,
+        currency: currency,
+        paymentMethod: paymentMethod,
+        amountUSD: document.getElementById('amountUSD').value,
+        amountINR: document.getElementById('amountINR').value,
+        exchangeRate: document.getElementById('exchangeRate').value,
+        exchangeRateDate: document.getElementById('exchangeRateDate').value,
+        // Add the file data here
+        attachment: fileData, 
+        attachmentName: fileName
+    };
 
+            // Helper to convert file to Base64
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
             // Calculate grand total
             let grandTotal = parseFloat(formData.amountINR) || 0;
 
