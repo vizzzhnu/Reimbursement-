@@ -695,7 +695,7 @@ function fileToBase64(file) {
 
             // Send to n8n webhook
             try {
-                const response = await fetch('https://n8ntest.ottoclothing.in/webhook/reimbursement', {
+                const response = await fetch('https://n8n.wowflo.io/webhook/reimbursement', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -743,8 +743,8 @@ function fileToBase64(file) {
 
             // Send to n8n webhook for calculation
             try {
-                console.log('Sending to webhook: https://n8ntest.ottoclothing.in/webhook/calculcate');
-                const response = await fetch('https://n8ntest.ottoclothing.in/webhook/calculcate', {
+                console.log('Sending to webhook: https://n8n.wowflo.io/webhook/calculcate');
+                const response = await fetch('https://n8n.wowflo.io/webhook/calculcate', {
                     method: 'POST',
                     mode: 'cors',
                     headers: {
