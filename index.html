@@ -3,749 +3,543 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Billing Form</title>
+    <title>FinanceFlow Pro | Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --primary-hover: #4f46e5;
+            --danger: #ef4444;
+            --success: #10b981;
+            --slate-50: #f8fafc;
+            --slate-100: #f1f5f9;
+            --slate-200: #e2e8f0;
+            --slate-600: #475569;
+            --slate-700: #334155;
+            --slate-900: #0f172a;
+            --glass: rgba(255, 255, 255, 0.98);
         }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--slate-900);
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(225,39%,25%,1) 0, transparent 50%);
             min-height: 100vh;
             padding: 40px 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            color: var(--slate-900);
         }
 
         .container {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 40px 50px;
-            max-width: 1400px;
-            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
+            padding: 48px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
-        h1 {
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 28px;
-            text-align: center;
-            grid-column: 1 / -1;
+        header { text-align: center; margin-bottom: 40px; }
+        header h1 { 
+            font-weight: 800; 
+            letter-spacing: -1.5px; 
+            font-size: 2.5rem; 
+            background: linear-gradient(to right, var(--slate-900), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        /* Tab Navigation Styles */
-        .tab-navigation {
-            display: flex;
-            border-bottom: 2px solid #e0e0e0;
-            margin-bottom: 30px;
+        .nav-tabs { 
+            display: flex; 
+            background: var(--slate-100); 
+            padding: 8px; 
+            border-radius: 20px; 
+            margin-bottom: 40px; 
+            gap: 4px; 
+            width: fit-content; 
+            margin-left: auto; 
+            margin-right: auto;
+            border: 1px solid var(--slate-200);
+        }
+
+        .tab-btn { 
+            padding: 12px 28px; 
+            border: none; 
+            background: transparent; 
+            font-weight: 700; 
+            color: var(--slate-600); 
+            border-radius: 14px; 
+            cursor: pointer; 
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+            display: flex; 
+            align-items: center; 
             gap: 10px;
+            font-size: 0.95rem;
         }
 
-        .tab-button {
-            padding: 12px 30px;
-            background: transparent;
-            border: none;
-            border-bottom: 3px solid transparent;
-            color: #666;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: auto;
-            margin-top: 0;
+        .tab-btn.active { 
+            background: white; 
+            color: var(--primary); 
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
         }
 
-        .tab-button:hover {
-            color: #667eea;
-            background: #f5f7ff;
-            transform: none;
-            box-shadow: none;
+        .tab-btn:hover:not(.active) { color: var(--primary-light); background: rgba(255,255,255,0.5); }
+
+        .content { display: none; animation: slideUp 0.5s ease forwards; }
+        .content.active { display: block; }
+        @keyframes slideUp { 
+            from { opacity: 0; transform: translateY(20px); } 
+            to { opacity: 1; transform: translateY(0); } 
         }
 
-        .tab-button.active {
-            color: #667eea;
-            border-bottom-color: #667eea;
-            background: transparent;
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+        .full-width { grid-column: 1 / -1; }
+        .group { display: flex; flex-direction: column; gap: 8px; }
+
+        label { font-size: 0.85rem; font-weight: 700; color: var(--slate-700); padding-left: 4px; }
+        .required { color: var(--danger); }
+
+        input, select { 
+            padding: 14px 18px; 
+            border: 2px solid var(--slate-100); 
+            border-radius: 14px; 
+            font-size: 1rem; 
+            background: #fff; 
+            width: 100%; 
+            transition: all 0.2s; 
+            color: var(--slate-900);
         }
 
-        .tab-content {
-            display: none;
+        input:focus, select:focus { 
+            outline: none; 
+            border-color: var(--primary-light); 
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); 
+            background: #fff;
         }
 
-        .tab-content.active {
-            display: block;
+        input[type="file"] { padding: 10px; font-size: 0.9rem; background: var(--slate-50); border: 2px dashed var(--slate-200); }
+
+        .btn-main { 
+            background: var(--primary); 
+            color: white; 
+            border: none; 
+            padding: 18px; 
+            border-radius: 16px; 
+            font-weight: 700; 
+            font-size: 1.05rem;
+            cursor: pointer; 
+            transition: all 0.3s; 
+            width: 100%; 
+            box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.39);
         }
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            margin-bottom: 24px;
+        .btn-main:hover { 
+            background: var(--primary-hover); 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45); 
         }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
+        .btn-edit { background: var(--slate-100); color: var(--primary); border: none; padding: 8px 16px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .btn-edit:hover { background: var(--primary); color: white; }
+        .btn-save { background: var(--success); color: white; border: none; padding: 8px 16px; border-radius: 10px; font-weight: 700; cursor: pointer; }
+
+        .table-wrap { 
+            margin-top: 30px; 
+            border-radius: 20px; 
+            overflow-x: auto; 
+            border: 1px solid var(--slate-200); 
+            background: white; 
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            -webkit-overflow-scrolling: touch;
         }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 500;
-            font-size: 14px;
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            min-width: 1300px;
+            table-layout: auto; 
         }
 
-        label .required {
-            color: #e74c3c;
-            margin-left: 2px;
+        th, td { 
+            padding: 16px; 
+            text-align: left; 
+            border-bottom: 1px solid var(--slate-100);
+            white-space: nowrap; 
         }
 
-        input[type="text"],
-        input[type="number"],
-        input[type="date"],
-        select {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 15px;
-            transition: all 0.3s ease;
-            font-family: inherit;
+        th { background: var(--slate-50); font-weight: 700; color: var(--slate-700); }
+
+        .loader { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); display: none; justify-content: center; align-items: center; z-index: 1000; color: white; flex-direction: column; gap: 20px; backdrop-filter: blur(8px); }
+        .spinner { width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s cubic-bezier(0.5, 0.1, 0.4, 0.9) infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .edit-input { padding: 8px !important; border-radius: 8px !important; font-size: 0.85rem !important; border: 2px solid var(--primary-light) !important; height: auto !important; }
+
+        .charges-box {
+            background: var(--slate-50); 
+            padding: 24px; 
+            border-radius: 18px; 
+            border: 2px solid var(--slate-100);
+            transition: 0.3s;
         }
-
-        input[type="text"]:focus,
-        input[type="number"]:focus,
-        input[type="date"]:focus,
-        select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        select {
-            cursor: pointer;
-            background-color: white;
-        }
-
-        .conversion-info {
-            margin-top: 8px;
-            padding: 10px;
-            background: #f0f4ff;
-            border-left: 3px solid #667eea;
-            border-radius: 4px;
-            font-size: 13px;
-            color: #555;
-            display: none;
-        }
-
-        .conversion-info.show {
-            display: block;
-        }
-
-        .extra-charges {
-            display: none;
-            padding: 20px;
-            background: #fff9e6;
-            border-radius: 8px;
-            border: 1px dashed #ffc107;
-            grid-column: 1 / -1;
-        }
-
-        .extra-charges.show {
-            display: block;
-        }
-
-        .extra-charges-content {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .checkbox-group {
-            display: flex;
-            align-items: center;
-        }
-
-        .checkbox-group input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            margin-right: 10px;
-            cursor: pointer;
-        }
-
-        .checkbox-group label {
-            margin-bottom: 0;
-            cursor: pointer;
-        }
-
-        .charges-input-wrapper {
-            display: none !important;
-        }
-
-        .charges-input-wrapper.show {
-            display: flex !important;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .submit-section {
-            grid-column: 1 / -1;
-            margin-top: 10px;
-        }
-
-        button {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        button:active {
-            transform: translateY(0);
-        }
-
-        /* Upload Container Styles */
-        .upload-container {
-            margin: 20px 0;
-            grid-column: 1 / -1;
-        }
-
-        .upload-label {
-            display: block;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        .upload-input {
-            width: 0.1px;
-            height: 0.1px;
-            opacity: 0;
-            overflow: hidden;
-            position: absolute;
-            z-index: -1;
-        }
-
-        .custom-upload-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #009879;
-            color: white;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            border: 1px solid #007d63;
-            font-size: 14px;
-        }
-
-        .custom-upload-button:hover {
-            background-color: #007d63;
-        }
-
-        .file-name-display {
-            display: block;
-            margin-top: 8px;
-            font-size: 12px;
-            color: #666;
-            font-style: italic;
-        }
-
-        .max-size-text {
-            font-size: 11px;
-            color: #999;
-            margin-top: 4px;
-        }
-
-        /* Loading Overlay Styles */
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .loading-overlay.show {
-            display: flex;
-        }
-
-        .loading-content {
-            background: white;
-            padding: 40px;
-            border-radius: 16px;
-            text-align: center;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #e0e0e0;
-            border-top: 5px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .loading-text {
-            font-size: 18px;
-            color: #333;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .loading-subtext {
-            font-size: 14px;
-            color: #666;
-        }
-
-        @media (max-width: 1200px) {
-            .form-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 24px;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
+        .charges-box:has(input:checked) {
+            border-color: var(--primary-light);
+            background: #f5f3ff;
         }
     </style>
 </head>
 <body>
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay">
-        <div class="loading-content">
-            <div class="spinner"></div>
-            <div class="loading-text">Processing...</div>
-            <div class="loading-subtext">Please wait while we process your request</div>
-        </div>
+    <div id="loadingOverlay" class="loader">
+        <div class="spinner"></div>
+        <b id="loaderText" style="letter-spacing: 1px; font-size: 1.1rem;">Processing...</b>
     </div>
 
     <div class="container">
-        <h1>📄 Reimbursement Management</h1>
-        
-        <!-- Tab Navigation -->
-        <div class="tab-navigation">
-            <button class="tab-button active" onclick="switchTab('billing')">📝 Billing Form - Data Entry</button>
-            <button class="tab-button" onclick="switchTab('calculation')">🧮 Calculation</button>
+        <header>
+            <h1>FinanceFlow <span style="color:var(--primary); font-weight: 400; font-style: italic;">Pro</span></h1>
+            <p style="color: var(--slate-600); margin-top: -10px; font-weight: 500;">Intelligent Reimbursement Management</p>
+        </header>
+
+        <div class="nav-tabs">
+            <button class="tab-btn active" id="tab-billing" onclick="switchTab(event, 'billing')">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"></path></svg>
+                New Bill
+            </button>
+            <button class="tab-btn" id="tab-calculation" onclick="switchTab(event, 'calculation')">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                Report
+            </button>
+            <button class="tab-btn" id="tab-manage" onclick="switchTab(event, 'manage')">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                Manage
+            </button>
         </div>
 
-        <!-- Billing Form Tab -->
-        <div id="billingTab" class="tab-content active">
+        <div id="billing" class="content active">
             <form id="billingForm">
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="billName">Bill Name <span class="required">*</span></label>
-                    <input type="text" id="billName" name="billName" placeholder="Enter bill name" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="invoiceNumber">Invoice Number <span class="required">*</span></label>
-                    <input type="text" id="invoiceNumber" name="invoiceNumber" placeholder="Enter invoice number" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="invoiceDate">Invoice Date</label>
-                    <input type="date" id="invoiceDate" name="invoiceDate">
-                </div>
-
-                <div class="form-group">
-                    <label for="site">Site</label>
-                    <input type="text" id="site" name="site" placeholder="Enter site name">
-                </div>
-
-                <div class="form-group">
-                    <label for="subLedger">Sub Ledger</label>
-                    <input type="text" id="subLedger" name="subLedger" placeholder="Enter sub ledger">
-                </div>
-
-                <div class="form-group">
-                    <label for="gstNumber">GST IN Number</label>
-                    <input type="text" id="gstNumber" name="gstNumber" placeholder="Enter GST IN number">
-                </div>
-
-                <div class="form-group">
-                    <label for="currency">Currency</label>
-                    <select id="currency" name="currency">
-                        <option value="rupees">Rupees (INR)</option>
-                        <option value="usd">US Dollar (USD)</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="amount">Amount</label>
-                    <input type="number" id="amount" name="amount" step="0.01" placeholder="Enter amount">
-                    <div id="conversionInfo" class="conversion-info"></div>
-                </div>
-
-                <!-- Hidden fields -->
-                <input type="hidden" id="amountUSD" name="amountUSD" value="">
-                <input type="hidden" id="amountINR" name="amountINR" value="">
-                <input type="hidden" id="exchangeRate" name="exchangeRate" value="">
-                <input type="hidden" id="exchangeRateDate" name="exchangeRateDate" value="">
-                <input type="hidden" id="grandTotal" name="grandTotal" value="">
-                <input type="hidden" id="status" name="status" value="done">
-
-                <div class="form-group">
-                    <label for="paymentMethod">Payment Method</label>
-                    <select id="paymentMethod" name="paymentMethod">
-                        <option value="">-- Select Payment Method --</option>
-                        <option value="card">Card</option>
-                        <!-- <option value="upi">UPI</option> -->
-                    </select>
-                </div>
-
-                <div id="extraChargesSection" class="extra-charges">
-                    <div class="extra-charges-content">
-                        <div class="checkbox-group">
-                            <input type="checkbox" id="hasExtraCharges" name="hasExtraCharges">
-                            <label for="hasExtraCharges">Apply Extra Charges</label>
+                <div class="grid">
+                    <div class="group"><label>Bill Name <span class="required">*</span></label><input type="text" id="billName" placeholder="e.g. Client Dinner" required></div>
+                    <div class="group"><label>Invoice Number <span class="required">*</span></label><input type="text" id="invoiceNumber" placeholder="INV-001" required></div>
+                    <div class="group"><label>Invoice Date <span class="required">*</span></label><input type="date" id="invoiceDate" required></div>
+                    <div class="group"><label>Site <span class="required">*</span></label><input type="text" id="site" placeholder="Location/Office" required></div>
+                    <div class="group"><label>Sub Ledger <span class="required">*</span></label><input type="text" id="subLedger" placeholder="Account Category" required></div>
+                    <div class="group"><label>GSTIN Number <span class="required">*</span></label><input type="text" id="gstNumber" placeholder="Tax ID" required></div>
+                    <div class="group"><label>Currency <span class="required">*</span></label>
+                        <select id="currency">
+                            <option value="INR">Rupees (INR)</option>
+                            <option value="USD">Dollar (USD)</option>
+                        </select>
+                    </div>
+                    <div class="group"><label>Base Amount <span class="required">*</span></label><input type="number" id="amount" placeholder="0.00" step="0.01" required></div>
+                    
+                    <div class="group full-width charges-box">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <input type="checkbox" id="hasExtraCharges" style="width:20px; height:20px; cursor:pointer; accent-color: var(--primary);"> 
+                            <label for="hasExtraCharges" style="cursor:pointer; margin:0; font-size: 0.95rem; font-weight: 700;">Apply Additional Charges (%)</label>
                         </div>
-                        <div class="charges-input-wrapper" id="chargesAmountGroup">
-                            <label for="chargesAmount">Charges Amount</label>
-                            <input type="number" id="chargesAmount" name="chargesAmount" step="0.01" placeholder="Enter charges amount">
+                        <div id="chargesContainer" style="display:none; margin-top: 15px;">
+                            <label style="font-size: 0.75rem; color: var(--primary);">Charge Percentage (%)</label>
+                            <input type="number" id="chargesAmount" placeholder="e.g. 5" step="0.01" style="margin-top:5px;">
                         </div>
                     </div>
-                </div>
-
-                <div class="upload-container">
-                    <span class="upload-label">Upload Bill (JPEG, JPG, PDF) <span style="color: red;">*</span></span>
-                    <input type="file" name="file" id="file" class="upload-input" accept=".jpg,.jpeg,.pdf" />
-                    <label for="file" class="custom-upload-button">Choose file</label>
-                    <div class="file-name-display" id="file-name">No file chosen</div>
-                    <div class="max-size-text">Max size: 5MB</div>
-                </div>
-
-                <div class="submit-section">
-                    <button type="submit">Submit Bill</button>
-                </div>
-            </div>
-        </form>
-        </div>
-
-        <!-- Calculation Tab -->
-        <div id="calculationTab" class="tab-content">
-            <form id="calculationForm">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="calcFromDate">From Date <span class="required">*</span></label>
-                        <input type="date" id="calcFromDate" name="calcFromDate" required>
+                    
+                    <div class="group full-width">
+                        <label>Upload Document (PDF/JPG) <span class="required">*</span></label>
+                        <input type="file" id="file" required>
                     </div>
-
-                    <div class="form-group">
-                        <label for="calcToDate">To Date <span class="required">*</span></label>
-                        <input type="date" id="calcToDate" name="calcToDate" required>
-                    </div>
-
-                    <div class="submit-section">
-                        <button type="submit">Calculate & Generate Report</button>
-                    </div>
+                </div>
+                <div style="max-width: 400px; margin: 30px auto 0;">
+                    <button type="submit" class="btn-main">Upload & Submit Record</button>
                 </div>
             </form>
         </div>
+
+        <div id="calculation" class="content">
+            <div style="max-width: 800px; margin: 0 auto;">
+                <form id="calculationForm">
+                    <div class="grid">
+                        <div class="group"><label>From Date <span class="required">*</span></label><input type="date" id="calcFromDate" required></div>
+                        <div class="group"><label>To Date <span class="required">*</span></label><input type="date" id="calcToDate" required></div>
+                        <div class="group full-width" style="display: flex; align-items: center; margin-top: 20px;">
+                            <button type="submit" class="btn-main" style="max-width: 300px;">Generate Report</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="manage" class="content">
+            <div class="grid" style="background:var(--slate-50); padding:24px; border-radius:20px; margin-bottom:30px; align-items:flex-end; border: 1px solid var(--slate-200);">
+                <div class="group"><label>Start Date</label><input type="date" id="editFromDate"></div>
+                <div class="group"><label>End Date</label><input type="date" id="editToDate"></div>
+                <div class="group"><button class="btn-main" style="padding: 14px;" onclick="loadEditData()">Load Entries</button></div>
+            </div>
+            <div class="table-wrap" id="tableContainer" style="display:none;">
+                <table id="editTable">
+                    <thead>
+                        <tr>
+                            <th>Inv #</th>
+                            <th>Bill Name</th>
+                            <th>Date</th>
+                            <th>Site</th>
+                            <th>Sub Ledger</th>
+                            <th>GSTIN</th>
+                            <th>Curr</th>
+                            <th>Total (₹)</th>
+                            <th>Base (USD)</th>
+                            <th>Base (INR)</th>
+                            <th>Charges (%)</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div id="emptyState" style="text-align:center; padding: 40px; color: var(--slate-600); display:none;">
+                No records found for the selected date range.
+            </div>
+        </div>
     </div>
 
-    <script>
-        // Loading functions
-        function showLoading(text = 'Processing...') {
-            document.querySelector('.loading-text').textContent = text;
-            document.getElementById('loadingOverlay').classList.add('show');
-        }
+<script>
+let USD_TO_INR_RATE = 90.76;
+let rateLastFetched = null;
 
-        function hideLoading() {
-            document.getElementById('loadingOverlay').classList.remove('show');
-        }
+function switchTab(e, id) {
+    document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    const targetBtn = e ? e.currentTarget : document.getElementById('tab-' + id);
+    if (targetBtn) targetBtn.classList.add('active');
+}
 
-        // Tab switching function
-        function switchTab(tabName) {
-            document.getElementById('billingTab').classList.remove('active');
-            document.getElementById('calculationTab').classList.remove('active');
-            
-            const buttons = document.querySelectorAll('.tab-button');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            
-            if (tabName === 'billing') {
-                document.getElementById('billingTab').classList.add('active');
-                buttons[0].classList.add('active');
-            } else if (tabName === 'calculation') {
-                document.getElementById('calculationTab').classList.add('active');
-                buttons[1].classList.add('active');
-            }
-        }
+document.getElementById('hasExtraCharges').onchange = function () {
+    document.getElementById('chargesContainer').style.display = this.checked ? 'block' : 'none';
+};
 
-        // File upload display
-        const fileInput = document.getElementById('file');
-        const fileNameDisplay = document.getElementById('file-name');
-        fileInput.addEventListener('change', function() {
-            if (this.files && this.files.length > 0) {
-                fileNameDisplay.textContent = this.files[0].name;
-            } else {
-                fileNameDisplay.textContent = 'No file chosen';
-            }
+const loader = (show, text = "Processing...") => {
+    document.getElementById('loaderText').innerText = text;
+    document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+};
+
+async function fetchUsdToInrRate() {
+    const today = new Date().toISOString().split('T')[0];
+    if (rateLastFetched === today) return;
+    try {
+        const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+        const data = await res.json();
+        if (data?.rates?.INR) {
+            USD_TO_INR_RATE = data.rates.INR;
+            rateLastFetched = today;
+            localStorage.setItem('usdToInrRate', USD_TO_INR_RATE);
+            localStorage.setItem('usdToInrRateDate', today);
+        }
+    } catch (e) { console.error('Rate fetch failed'); }
+}
+
+document.getElementById('billingForm').onsubmit = async function (e) {
+    e.preventDefault();
+    loader(true, "Uploading Record...");
+    
+    const file = document.getElementById('file').files[0];
+    const toBase64 = file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+
+    const attachmentBase64 = await toBase64(file);
+    const currency = document.getElementById('currency').value;
+    const enteredAmount = parseFloat(document.getElementById('amount').value) || 0;
+
+    if (currency === 'USD') { await fetchUsdToInrRate(); }
+    
+    const baseAmountINR = currency === 'USD' ? enteredAmount * USD_TO_INR_RATE : enteredAmount;
+    
+    // PERCENTAGE CALCULATION
+    const chargePercent = document.getElementById('hasExtraCharges').checked 
+        ? parseFloat(document.getElementById('chargesAmount').value || 0) : 0;
+    const finalAmountINR = (baseAmountINR * (1 + chargePercent / 100)).toFixed(2);
+
+    const payload = {
+        billName: billName.value,
+        invoiceNumber: invoiceNumber.value,
+        invoiceDate: invoiceDate.value,
+        site: site.value,
+        subLedger: subLedger.value,
+        gstNumber: gstNumber.value,
+        currency: currency,
+        amountINR: finalAmountINR, // Total including charges
+        amountUSD: currency === 'USD' ? enteredAmount : (baseAmountINR / USD_TO_INR_RATE).toFixed(2), // Base amount in USD
+        hasExtraCharges: document.getElementById('hasExtraCharges').checked,
+        chargesAmount: chargePercent, // Saving the percentage
+        attachment: attachmentBase64,
+        amount: baseAmountINR.toFixed(2) // Base amount in INR
+    };
+
+    try {
+        const r = await fetch('https://n8n.wowflo.io/webhook/d321cdb8-b310-4197-9bfc-f840eb34a3bf', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
         });
+        if (r.ok) { alert("✅ Success!"); this.reset(); document.getElementById('chargesContainer').style.display='none'; }
+    } catch { alert("❌ Error"); }
+    loader(false);
+};
 
-        // USD to INR exchange rate
-        let USD_TO_INR_RATE = 90.76;
-        let rateLastFetched = null;
-
-        const currencySelect = document.getElementById('currency');
-        const amountInput = document.getElementById('amount');
-        const conversionInfo = document.getElementById('conversionInfo');
-        const paymentMethodSelect = document.getElementById('paymentMethod');
-        const extraChargesSection = document.getElementById('extraChargesSection');
-        const hasExtraCharges = document.getElementById('hasExtraCharges');
-        const chargesAmountGroup = document.getElementById('chargesAmountGroup');
-        const invoiceDateInput = document.getElementById('invoiceDate');
-
-        const today = new Date().toISOString().split('T')[0];
-        invoiceDateInput.value = today;
-
-        // Fetch exchange rate
-        async function fetchExchangeRate() {
-            const cachedRate = localStorage.getItem('usdToInrRate');
-            const cachedDate = localStorage.getItem('usdToInrRateDate');
-            const currentDate = new Date().toISOString().split('T')[0];
-
-            if (cachedRate && cachedDate === currentDate) {
-                USD_TO_INR_RATE = parseFloat(cachedRate);
-                rateLastFetched = cachedDate;
-                return;
-            }
-
-            try {
-                const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-                const data = await response.json();
-                
-                if (data && data.rates && data.rates.INR) {
-                    USD_TO_INR_RATE = data.rates.INR;
-                    rateLastFetched = currentDate;
-                    localStorage.setItem('usdToInrRate', USD_TO_INR_RATE.toString());
-                    localStorage.setItem('usdToInrRateDate', currentDate);
-                    
-                    if (currencySelect.value === 'usd') {
-                        updateConversion();
-                    }
-                }
-            } catch (error) {
-                console.error('Error fetching exchange rate:', error);
-            }
-        }
-
-        fetchExchangeRate();
-
-        // Handle currency conversion
-        function updateConversion() {
-            const currency = currencySelect.value;
-            const amount = parseFloat(amountInput.value);
-
-            document.getElementById('amountUSD').value = '';
-            document.getElementById('amountINR').value = '';
-            document.getElementById('exchangeRate').value = '';
-            document.getElementById('exchangeRateDate').value = '';
-
-            if (currency === 'usd' && amount > 0) {
-                const inrAmount = (amount * USD_TO_INR_RATE).toFixed(2);
-                const rateDate = rateLastFetched || today;
-                const rateFixed = USD_TO_INR_RATE.toFixed(2);
-                
-                conversionInfo.innerHTML = `💱 Converted to INR: ₹${inrAmount} <br><small>Rate: $1 = ₹${rateFixed} (updated ${rateDate})</small>`;
-                conversionInfo.classList.add('show');
-                
-                document.getElementById('amountUSD').value = amount.toFixed(2);
-                document.getElementById('amountINR').value = inrAmount;
-                document.getElementById('exchangeRate').value = rateFixed;
-                document.getElementById('exchangeRateDate').value = rateDate;
-            } else if (currency === 'rupees' && amount > 0) {
-                conversionInfo.classList.remove('show');
-                document.getElementById('amountINR').value = amount.toFixed(2);
-            } else {
-                conversionInfo.classList.remove('show');
-            }
-        }
-
-        currencySelect.addEventListener('change', updateConversion);
-        amountInput.addEventListener('input', updateConversion);
-        amountInput.addEventListener('blur', updateConversion);
-
-        // Handle payment method
-        paymentMethodSelect.addEventListener('change', function() {
-            if (this.value === 'card') {
-                extraChargesSection.classList.add('show');
-            } else {
-                extraChargesSection.classList.remove('show');
-                hasExtraCharges.checked = false;
-                chargesAmountGroup.classList.remove('show');
-            }
+async function loadEditData() {
+    loader(true, "Fetching Data...");
+    const from = document.getElementById('editFromDate').value;
+    const to = document.getElementById('editToDate').value;
+    try {
+        const r = await fetch('https://n8n.wowflo.io/webhook/get-reimbursements');
+        const data = await r.json();
+        const tbody = document.querySelector('#editTable tbody');
+        tbody.innerHTML = '';
+        const filtered = data.filter(i => {
+            const d = new Date(i.invoiceDate);
+            return (!from || d >= new Date(from)) && (!to || d <= new Date(to));
         });
+        if (!filtered.length) {
+            document.getElementById('tableContainer').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'block';
+        } else {
+            document.getElementById('emptyState').style.display = 'none';
+            filtered.forEach(i => {
+                const tr = document.createElement('tr');
+                tr.setAttribute('data-inv', i.invoiceNumber);
+                
+                // Calculate Display Total: Base INR * (1 + Percent/100)
+                const baseInr = parseFloat(i.amount) || 0;
+                const percent = parseFloat(i.chargesAmount) || 0;
+                const totalInr = baseInr * (1 + percent / 100);
 
-        hasExtraCharges.addEventListener('change', function() {
-            if (this.checked) {
-                chargesAmountGroup.classList.add('show');
-            } else {
-                chargesAmountGroup.classList.remove('show');
-                document.getElementById('chargesAmount').value = '';
-            }
-        });
-
-        // Helper to convert file to Base64
-        function fileToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
+                tr.innerHTML = `
+                    <td style="font-weight:800;color:var(--primary)">${i.invoiceNumber}</td>
+                    <td>${i.billName || ''}</td>
+                    <td>${i.invoiceDate || ''}</td>
+                    <td>${i.site || ''}</td>
+                    <td>${i.subLedger || ''}</td>
+                    <td>${i.gstNumber || ''}</td>
+                    <td>${i.currency || ''}</td>
+                    <td style="font-weight:700; color:var(--success)">₹${totalInr.toFixed(2)}</td>
+                    <td style="color:var(--slate-600)">$${i.amountUSD || '0.00'}</td>
+                    <td style="color:var(--slate-600)">₹${baseInr.toFixed(2)}</td>
+                    <td>${percent}%</td>
+                    <td><button class="btn-edit" onclick="toggleEdit(this)">Edit</button></td>
+                `;
+                tbody.appendChild(tr);
             });
+            document.getElementById('tableContainer').style.display = 'block';
         }
+    } catch { alert("Error loading"); }
+    loader(false);
+}
 
-        // Billing Form submission
-        document.getElementById('billingForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            showLoading('Submitting your bill...');
-            
-            try {
-                const file = fileInput.files[0];
-                let fileData = null;
-                let fileName = null;
+function syncAmounts(row, source) {
+    const inrInput = row.querySelector('.edit-inr');
+    const usdInput = row.querySelector('.edit-usd');
+    const percentInput = row.querySelector('.edit-percent');
+    const totalDisplay = row.cells[7];
 
-                if (file) {
-                    if (file.size > 5 * 1024 * 1024) {
-                        hideLoading();
-                        alert('File is too large. Please upload a file smaller than 5MB.');
-                        return;
-                    }
-                    fileData = await fileToBase64(file);
-                    fileName = file.name;
-                }
-                
-                const currency = document.getElementById('currency').value;
-                const paymentMethod = document.getElementById('paymentMethod').value;
-                
-                const formData = {
-                    billName: document.getElementById('billName').value,
-                    invoiceNumber: document.getElementById('invoiceNumber').value,
-                    invoiceDate: document.getElementById('invoiceDate').value,
-                    site: document.getElementById('site').value,
-                    subLedger: document.getElementById('subLedger').value,
-                    gstNumber: document.getElementById('gstNumber').value,
-                    currency: currency,
-                    paymentMethod: paymentMethod,
-                    amountUSD: document.getElementById('amountUSD').value,
-                    amountINR: document.getElementById('amountINR').value,
-                    exchangeRate: document.getElementById('exchangeRate').value,
-                    exchangeRateDate: document.getElementById('exchangeRateDate').value,
-                    attachment: fileData,
-                    attachmentName: fileName
-                };
+    let inrVal = parseFloat(inrInput.value) || 0;
+    let usdVal = parseFloat(usdInput.value) || 0;
+    let percentVal = parseFloat(percentInput.value) || 0;
 
-                let grandTotal = parseFloat(formData.amountINR) || 0;
+    if (source === 'inr') {
+        usdVal = inrVal / USD_TO_INR_RATE;
+        usdInput.value = usdVal.toFixed(2);
+    } else if (source === 'usd') {
+        inrVal = usdVal * USD_TO_INR_RATE;
+        inrInput.value = inrVal.toFixed(2);
+    }
 
-                if (paymentMethod === 'card' && hasExtraCharges.checked) {
-                    const chargesAmount = parseFloat(document.getElementById('chargesAmount').value);
-                    formData.hasExtraCharges = true;
-                    formData.extraCharges = parseFloat(chargesAmount.toFixed(2));
-                    grandTotal = grandTotal + chargesAmount;
-                } else {
-                    formData.hasExtraCharges = false;
-                    formData.extraCharges = 0;
-                }
+    // Re-calculate Total (₹) live
+    const newTotal = inrVal * (1 + percentVal / 100);
+    totalDisplay.innerText = `₹${newTotal.toFixed(2)}`;
+}
 
-                formData.grandTotal = parseFloat(grandTotal.toFixed(2));
-                formData.status = 'done';
+async function toggleEdit(btn) {
+    const row = btn.closest('tr');
+    const cells = row.cells;
+    
+    if (btn.innerText === "Edit") {
+        btn.innerText = "Save";
+        btn.className = "btn-save";
+        
+        for (let i = 1; i <= 5; i++) cells[i].innerHTML = `<input class="edit-input" value="${cells[i].innerText}">`;
+        
+        const curr = cells[6].innerText;
+        cells[6].innerHTML = `<select class="edit-input"><option ${curr==='INR'?'selected':''}>INR</option><option ${curr==='USD'?'selected':''}>USD</option></select>`;
+        
+        // USD Base
+        const rawUsd = cells[8].innerText.replace('$', '');
+        cells[8].innerHTML = `<input type="number" class="edit-input edit-usd" value="${rawUsd}" oninput="syncAmounts(this.closest('tr'), 'usd')">`;
 
-                const response = await fetch('https://n8n.wowflo.io/webhook/reimbursement', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
+        // INR Base
+        const rawInr = cells[9].innerText.replace('₹', '');
+        cells[9].innerHTML = `<input type="number" class="edit-input edit-inr" value="${rawInr}" oninput="syncAmounts(this.closest('tr'), 'inr')">`;
 
-                hideLoading();
+        // Percent
+        const rawPercent = cells[10].innerText.replace('%', '');
+        cells[10].innerHTML = `<input type="number" class="edit-input edit-percent" value="${rawPercent}" oninput="syncAmounts(this.closest('tr'), 'percent')">`;
+        
+    } else {
+        loader(true, "Updating...");
+        
+        const baseINR = parseFloat(cells[9].querySelector('input').value) || 0;
+        const baseUSD = parseFloat(cells[8].querySelector('input').value) || 0;
+        const percent = parseFloat(cells[10].querySelector('input').value) || 0;
+        const totalINR = baseINR * (1 + percent / 100);
 
-                if (response.ok) {
-                    const result = await response.json();
-                    alert('✅ Bill submitted successfully!');
-                } else {
-                    alert('❌ Error submitting bill. Status: ' + response.status);
-                }
-            } catch (error) {
-                hideLoading();
-                alert('❌ Network error: ' + error.message);
-            }
+        const payload = {
+            action: 'update',
+            invoiceNumber: row.dataset.inv,
+            billName: cells[1].querySelector('input').value,
+            invoiceDate: cells[2].querySelector('input').value,
+            site: cells[3].querySelector('input').value,
+            subLedger: cells[4].querySelector('input').value,
+            gstNumber: cells[5].querySelector('input').value,
+            currency: cells[6].querySelector('select').value,
+            amountINR: totalINR.toFixed(2),
+            amountUSD: baseUSD.toFixed(2),
+            amount: baseINR.toFixed(2),
+            chargesAmount: percent
+        };
+
+        try {
+            const res = await fetch('https://n8n.wowflo.io/webhook/update-reimbursement', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            if(res.ok) { await loadEditData(); alert("✅ Updated"); }
+        } catch { alert("❌ Failed"); }
+        loader(false);
+    }
+}
+
+document.getElementById('calculationForm').onsubmit = async function (e) {
+    e.preventDefault();
+    loader(true, "Preparing Report...");
+    try {
+        await fetch('https://n8n.wowflo.io/webhook/35889b23-c42e-4f6a-b008-d116d85fadb8', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ fromDate: calcFromDate.value, toDate: calcToDate.value, action: 'send_report' })
         });
-
-        // Calculation Form submission
-        const calcFromDateInput = document.getElementById('calcFromDate');
-        const calcToDateInput = document.getElementById('calcToDate');
-        calcToDateInput.value = today;
-
-        document.getElementById('calculationForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            showLoading('Generating report...');
-            
-            try {
-                const calcData = {
-                    fromDate: document.getElementById('calcFromDate').value,
-                    toDate: document.getElementById('calcToDate').value
-                };
-
-                const response = await fetch('https://n8n.wowflo.io/webhook/calculcate', {
-                    method: 'POST',
-                    mode: 'cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(calcData)
-                });
-
-                hideLoading();
-
-                if (response.ok) {
-                    const result = await response.json();
-                    alert('✅ Calculation completed successfully!');
-                } else {
-                    alert('❌ Error submitting calculation. Status: ' + response.status);
-                }
-            } catch (error) {
-                hideLoading();
-                alert('❌ Network error: ' + error.message);
-            }
-        });
-    </script>
+        alert("📧 Sent!");
+    } catch { alert("Failed"); }
+    loader(false);
+};
+</script>
 </body>
 </html>
